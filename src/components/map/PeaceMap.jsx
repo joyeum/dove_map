@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import { ACLEDAPIClient, PeaceMapDataTransformer } from '../../services/acledAPI.js';
 
 // Leaflet 기본 아이콘 설정
 delete L.Icon.Default.prototype._getIconUrl;
@@ -60,6 +61,8 @@ const PeaceMap = ({
   const [conflicts, setConflicts] = useState([]);
   const [selectedPosition, setSelectedPosition] = useState(null);
   const [showWishModal, setShowWishModal] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   // 목업 데이터 - 평화 기원
   const mockPeaceWishes = [
@@ -70,17 +73,56 @@ const PeaceMap = ({
     { id: 5, lat: 33.3152, lng: 44.3661, country: '이라크', city: '바그다드', wishes: 3456, message: '이라크의 평화를 위해' }
   ];
 
-  // 목업 데이터 - 분쟁 지역
-  const mockConflicts = [
-    { id: 1, lat: 49.8397, lng: 24.0297, country: '우크라이나', region: '서부', intensity: 'high', description: '진행 중인 분쟁' },
-    { id: 2, lat: 31.3547, lng: 34.3088, country: '가자', region: '가자 지구', intensity: 'high', description: '분쟁 지역' },
-    { id: 3, lat: 35.2269, lng: 38.9968, country: '시리아', region: '북부', intensity: 'medium', description: '불안정 지역' },
-    { id: 4, lat: 9.0820, lng: 8.6753, country: '나이지리아', region: '북부', intensity: 'medium', description: '보안 우려 지역' }
-  ];
-
   useEffect(() => {
-    setPeaceWishes(mockPeaceWishes);
-    setConflicts(mockConflicts);
+    const loadConflictData = async () => {
+      const email = import.meta.env.VITE_ACLED_EMAIL;
+      const accessKey = import.meta.env.VITE_ACLED_ACCESS_KEY;
+
+      if (!email || !accessKey) {
+        console.warn('ACLED API credentials not found, using mock data');
+        setConflicts([
+          { id: 1, lat: 49.8397, lng: 24.0297, country: '우크라이나', region: '서부', intensity: 'high', description: '진행 중인 분쟁' },
+          { id: 2, lat: 31.3547, lng: 34.3088, country: '가자', region: '가자 지구', intensity: 'high', description: '분쟁 지역' },
+          { id: 3, lat: 35.2269, lng: 38.9968, country: '시리아', region: '북부', intensity: 'medium', description: '불안정 지역' },
+          { id: 4, lat: 9.0820, lng: 8.6753, country: '나이지리아', region: '북부', intensity: 'medium', description: '보안 우려 지역' }
+        ]);
+        setPeaceWishes(mockPeaceWishes);
+        return;
+      }
+
+      try {
+        setLoading(true);
+        setError(null);
+        
+        const acledClient = new ACLEDAPIClient(email, accessKey);
+        const conflictData = await acledClient.getRecentConflicts(30);
+        const transformedData = PeaceMapDataTransformer.transformACLEDData(conflictData);
+        
+        setConflicts(transformedData.map(item => ({
+          id: item.id,
+          lat: item.latitude,
+          lng: item.longitude,
+          country: item.country,
+          region: item.actor,
+          intensity: item.severity > 3 ? 'high' : item.severity > 1 ? 'medium' : 'low',
+          description: item.description,
+          type: item.type,
+          fatalities: item.fatalities,
+          date: item.date
+        })));
+        
+        setPeaceWishes(mockPeaceWishes);
+      } catch (err) {
+        console.error('Failed to load ACLED data:', err);
+        setError('Failed to load conflict data');
+        setConflicts([]);
+        setPeaceWishes(mockPeaceWishes);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadConflictData();
   }, []);
 
   const handleMapClick = (latlng) => {
@@ -114,6 +156,18 @@ const PeaceMap = ({
 
   return (
     <div className="relative w-full h-full">
+      {loading && (
+        <div className="absolute top-4 left-4 z-[1000] bg-blue-100 px-4 py-2 rounded-md">
+          Loading conflict data...
+        </div>
+      )}
+      
+      {error && (
+        <div className="absolute top-4 left-4 z-[1000] bg-red-100 px-4 py-2 rounded-md text-red-700">
+          {error}
+        </div>
+      )}
+      
       <MapContainer
         center={center}
         zoom={zoom}
@@ -163,6 +217,21 @@ const PeaceMap = ({
                   {conflict.country} - {conflict.region}
                 </h3>
                 <p className="text-sm text-gray-600 mb-2">{conflict.description}</p>
+                {conflict.type && (
+                  <p className="text-sm text-gray-600 mb-2">
+                    Event Type: {conflict.type}
+                  </p>
+                )}
+                {conflict.fatalities !== undefined && (
+                  <p className="text-sm text-gray-600 mb-2">
+                    Fatalities: {conflict.fatalities}
+                  </p>
+                )}
+                {conflict.date && (
+                  <p className="text-xs text-gray-500 mb-2">
+                    Date: {conflict.date}
+                  </p>
+                )}
                 <div className="flex items-center justify-between">
                   <span 
                     className="text-sm font-medium px-2 py-1 rounded text-white"

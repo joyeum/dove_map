@@ -226,7 +226,7 @@ function calculatePeaceScore(violentEvents, protestEvents) {
 
 ## 🎯 Peace Map 구현 예시
 
-실제 구현 코드는 [`acled-api-spec.js`](./acled-api-spec.js) 파일을 참조하세요:
+실제 구현 코드는 [`ACLED-API-SPEC.js`](./ACLED-API-SPEC.js) 파일을 참조하세요:
 
 ```javascript
 import { ACLEDAPIClient, PeaceMapDataTransformer } from './acled-api-spec.js';

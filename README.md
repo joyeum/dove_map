@@ -23,7 +23,7 @@
 
 ### 🔄 개발 중인 기능들
 - 📈 **실시간 차트**: Chart.js 기반 데이터 시각화 (UI만 완료)
-- 🌐 **실제 API 연동**: 현재 목업 데이터 사용 중
+- 🌐 **ACLED API 연동**: 실제 분쟁 데이터 연동 완료 ✅
 - 💾 **데이터베이스**: 사용자 기원 데이터 저장 시스템
 - 🔐 **사용자 인증**: 로그인/회원가입 시스템
 
@@ -82,16 +82,16 @@ npm run build
 2. 지도를 클릭하여 평화 기원 체험
 3. 각 페이지의 UI/UX 확인
 
-### 환경 변수 설정 (향후 실제 API 연동용)
+### 환경 변수 설정 (ACLED API 연동)
 
 `.env.local` 파일을 생성하고 다음 변수들을 설정하세요:
 
 ```env
-# ACLED API (무료 회원가입 필요)
+# ACLED API (무료 회원가입 필요) - 연동 완료!
 VITE_ACLED_EMAIL=your-email@example.com
 VITE_ACLED_ACCESS_KEY=your-access-key
 
-# News API (무료 티어 100req/day)
+# News API (무료 티어 100req/day) - 예정
 VITE_NEWS_API_KEY=your-news-api-key
 
 # 기타 설정
@@ -99,6 +99,12 @@ VITE_APP_URL=http://localhost:3001
 VITE_APP_NAME=Wishing Peace Map
 VITE_DEV_MODE=true
 ```
+
+**📋 ACLED API 설정 방법:**
+1. [ACLED Developer Portal](https://developer.acleddata.com/) 회원가입
+2. API 키 발급 (이메일로 전송)
+3. 위 환경 변수에 정보 입력
+4. 앱 실행 시 자동으로 실제 분쟁 데이터 로드!
 
 ## 🗺️ 사용된 무료 API
 
@@ -170,7 +176,7 @@ wishing-peace-map/
 
 ```
 ├── src/
-│   ├── api/               # API 클라이언트 ⏳
+│   ├── services/          # API 클라이언트 ✅ (ACLED 완료)
 │   ├── hooks/             # 커스텀 훅 ⏳
 │   ├── contexts/          # React 컨텍스트 ⏳
 │   └── types/             # TypeScript 타입 정의 ⏳
@@ -178,9 +184,22 @@ wishing-peace-map/
 └── tests/                 # 테스트 파일 ⏳
 ```
 
-## 🔧 현재 데이터 구조 (목업)
+## 🔧 데이터 구조 및 API 연동
 
-### 평화 기원 데이터 예시
+### ACLED API 연동 완료 ✅
+
+실제 분쟁 데이터를 ACLED API에서 가져와 지도에 표시합니다:
+
+```javascript
+// src/services/acledAPI.js
+import { ACLEDAPIClient, PeaceMapDataTransformer } from './acledAPI.js';
+
+const acledClient = new ACLEDAPIClient(email, accessKey);
+const conflictData = await acledClient.getRecentConflicts(30);
+const transformedData = PeaceMapDataTransformer.transformACLEDData(conflictData);
+```
+
+### 평화 기원 데이터 예시 (목업)
 
 ```javascript
 // src/components/map/PeaceMap.jsx
@@ -306,7 +325,7 @@ function App() {
 
 | API | 무료 제한 | 제한사항 | 연동 상태 | 가이드 |
 |-----|-----------|----------|----------|---------|
-| ACLED | 무제한 | 이메일 가입 필요 | ⏳ 계획됨 | 📖 [가이드](./docs/ACLED-API-Guide.md) |
+| ACLED | 무제한 | 이메일 가입 필요 | ✅ 완료 | 📖 [가이드](./docs/ACLED-API-Guide.md) |
 | UCDP | 무제한 | 없음 | ⏳ 계획됨 | 📝 준비 중 |
 | GDELT | 무제한 | 속도 제한 있음 | ⏳ 계획됨 | 📝 준비 중 |
 | OpenStreetMap | 무제한 | 과도한 요청 금지 | ✅ 사용 중 | ✅ 적용됨 |
@@ -315,7 +334,7 @@ function App() {
 
 ### 현재 상태
 - **지도 데이터**: OpenStreetMap 연동 완료
-- **분쟁/평화 데이터**: 목업 데이터 사용 중
+- **분쟁/평화 데이터**: ACLED API 연동 완료 ✅
 - **뉴스 데이터**: 목업 데이터 사용 중
 - **통계 데이터**: 시연용 고정 값 사용 중
 
@@ -363,8 +382,8 @@ function App() {
 - [x] 목업 데이터 기반 데모
 - [x] 반응형 디자인
 
-### Phase 2: 실제 데이터 연동 (예정)
-- [ ] ACLED API 연동 (분쟁 데이터)
+### Phase 2: 실제 데이터 연동 (진행 중)
+- [x] ACLED API 연동 (분쟁 데이터) ✅
 - [ ] News API 연동 (뉴스 데이터)
 - [ ] Chart.js 기반 데이터 시각화
 - [ ] 실시간 업데이트 시스템
@@ -396,7 +415,7 @@ function App() {
 
 **🕊️ 함께 평화로운 세상을 만들어 나가요 🕊️**
 
-**현재 상태**: 프로토타입 완료, 실제 API 연동 대기 중
+**현재 상태**: 프로토타입 완료, ACLED API 연동 완료 ✅
 
 [GitHub 저장소](https://github.com/yourusername/wishing-peace-map) • [이슈 등록](https://github.com/yourusername/wishing-peace-map/issues) • [기여하기](CONTRIBUTING.md)
 
