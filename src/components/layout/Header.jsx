@@ -25,7 +25,7 @@ const Header = () => {
             </div>
             <div>
               <h1 className="text-xl font-bold text-gray-900">평화 지도</h1>
-              <p className="text-xs text-gray-500">Wishing Peace Map</p>
+              <p className="text-xs text-gray-500">Dove Map</p>
             </div>
           </Link>
 

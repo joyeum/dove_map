@@ -1,6 +1,6 @@
-# 🕊️ Wishing Peace Map
+# 🕊️ Dove Map
 
-> **"전 세계의 평화를 함께 기원하는 희망 지도"**
+> **"전 세계의 평화를 상징하는 비둘기 지도"**
 
 갈등을 평화로 바꾸고, 전쟁 대신 희망을 모으는 글로벌 플랫폼입니다.
 
@@ -8,7 +8,7 @@
 [![Node.js](https://img.shields.io/badge/Node.js-v18+-green.svg)](https://nodejs.org/)
 [![React](https://img.shields.io/badge/React-v18+-blue.svg)](https://reactjs.org/)
 [![OpenStreetMap](https://img.shields.io/badge/Map-OpenStreetMap-orange.svg)](https://www.openstreetmap.org/)
-[![Development Status](https://img.shields.io/badge/Status-Prototype-yellow.svg)](https://github.com/yourusername/wishing-peace-map)
+[![Development Status](https://img.shields.io/badge/Status-Prototype-yellow.svg)](https://github.com/yourusername/dove-map)
 
 ## 🚧 현재 구현 상황
 
@@ -61,8 +61,8 @@
 
 ```bash
 # 저장소 클론
-git clone https://github.com/yourusername/wishing-peace-map.git
-cd wishing-peace-map
+git clone https://github.com/yourusername/dove-map.git
+cd dove-map
 
 # 의존성 설치
 npm install
@@ -96,7 +96,7 @@ VITE_NEWS_API_KEY=your-news-api-key
 
 # 기타 설정
 VITE_APP_URL=http://localhost:3001
-VITE_APP_NAME=Wishing Peace Map
+VITE_APP_NAME=Dove Map
 VITE_DEV_MODE=true
 ```
 
@@ -147,10 +147,10 @@ VITE_DEV_MODE=true
 - **Railway/Supabase** - 데이터베이스 호스팅 ⏳
 - **GitHub Actions** - CI/CD ⏳
 
-## 📁 프로젝트 구조 (현재)
+## �� 프로젝트 구조 (현재)
 
 ```
-wishing-peace-map/
+dove-map/
 ├── src/
 │   ├── components/          # React 컴포넌트
 │   │   ├── map/            # 지도 관련 컴포넌트 ✅
@@ -364,8 +364,8 @@ function App() {
 ## 🤝 지원 및 연락
 
 ### 현재 개발 상황 문의
-- **이슈 리포트**: [GitHub Issues](https://github.com/yourusername/wishing-peace-map/issues)
-- **기능 제안**: [GitHub Discussions](https://github.com/yourusername/wishing-peace-map/discussions)
+- **이슈 리포트**: [GitHub Issues](https://github.com/yourusername/dove-map/issues)
+- **기능 제안**: [GitHub Discussions](https://github.com/yourusername/dove-map/discussions)
 - **개발 협력**: GitHub Pull Request 환영
 
 ### 데모 버전 피드백
@@ -417,7 +417,7 @@ function App() {
 
 **현재 상태**: 프로토타입 완료, ACLED API 연동 완료 ✅
 
-[GitHub 저장소](https://github.com/yourusername/wishing-peace-map) • [이슈 등록](https://github.com/yourusername/wishing-peace-map/issues) • [기여하기](CONTRIBUTING.md)
+[GitHub 저장소](https://github.com/yourusername/dove-map) • [이슈 등록](https://github.com/yourusername/dove-map/issues) • [기여하기](CONTRIBUTING.md)
 
 </div># wishing_peace_map
 # wishing_peace_map

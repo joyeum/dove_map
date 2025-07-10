@@ -14,7 +14,7 @@ const Footer = () => {
               </div>
               <div>
                 <h3 className="text-lg font-bold text-gray-900">평화 지도</h3>
-                <p className="text-sm text-gray-500">Wishing Peace Map</p>
+                <p className="text-sm text-gray-500">Dove Map</p>
               </div>
             </div>
             <p className="text-gray-600 mb-4">
@@ -61,7 +61,7 @@ const Footer = () => {
         <div className="mt-8 pt-8 border-t border-gray-200">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-sm text-gray-500">
-              © 2024 Wishing Peace Map. MIT 라이선스 하에 배포됩니다.
+              © 2024 Dove Map. MIT 라이선스 하에 배포됩니다.
             </p>
             <p className="text-sm text-gray-500 mt-2 md:mt-0">
               🕊️ 함께 평화로운 세상을 만들어 나가요 🕊️

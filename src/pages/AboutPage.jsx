@@ -186,7 +186,7 @@ const AboutPage = () => {
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <a 
-            href="https://github.com/yourusername/wishing-peace-map" 
+            href="https://github.com/yourusername/dove-map" 
             className="px-6 py-3 bg-gray-900 text-white rounded-lg font-medium hover:bg-gray-800 transition-colors"
             target="_blank"
             rel="noopener noreferrer"
@@ -194,7 +194,7 @@ const AboutPage = () => {
             GitHub에서 보기
           </a>
           <a 
-            href="mailto:peace@wishingpeacemap.org" 
+            href="mailto:dove@dovemap.org" 
             className="px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
           >
             문의하기
