@@ -13,7 +13,7 @@ const Footer = () => {
                 <Heart className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h3 className="text-lg font-bold text-gray-900">평화 지도</h3>
+                <h3 className="text-lg font-bold text-gray-900">비둘기 지도</h3>
                 <p className="text-sm text-gray-500">Dove Map</p>
               </div>
             </div>
@@ -38,10 +38,9 @@ const Footer = () => {
           <div>
             <h4 className="text-sm font-semibold text-gray-900 mb-4">빠른 링크</h4>
             <ul className="space-y-2 text-sm">
-              <li><a href="/" className="text-gray-600 hover:text-gray-900">평화 지도</a></li>
+              <li><a href="/" className="text-gray-600 hover:text-gray-900">비둘기 지도</a></li>
               <li><a href="/dashboard" className="text-gray-600 hover:text-gray-900">대시보드</a></li>
               <li><a href="/stories" className="text-gray-600 hover:text-gray-900">희망 스토리</a></li>
-              <li><a href="/news" className="text-gray-600 hover:text-gray-900">평화 뉴스</a></li>
             </ul>
           </div>
 

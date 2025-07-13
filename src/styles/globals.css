@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* 평화 지도 아이콘 스타일 */
+/* 비둘기 지도 아이콘 스타일 */
 .peace-icon {
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
 }
@@ -93,7 +93,7 @@
   overflow: hidden;
 }
 
-/* 평화 지도 컨트롤 스타일 */
+/* 비둘기 지도 컨트롤 스타일 */
 .map-controls {
   position: absolute;
   top: 10px;
