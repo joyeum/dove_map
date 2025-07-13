@@ -25,7 +25,7 @@ const DashboardPage = () => {
 
       try {
         const acledClient = new ACLEDAPIClient(email, accessKey);
-        const conflictData = await acledClient.getRecentConflicts(30);
+        const conflictData = await acledClient.getAllConflicts(30);
         
         const uniqueCountries = new Set(conflictData.map(d => d.country));
         const highIntensity = conflictData.filter(d => d.fatalities > 5).length;

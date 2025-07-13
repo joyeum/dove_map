@@ -5,7 +5,6 @@ import HomePage from './pages/HomePage'
 import AboutPage from './pages/AboutPage'
 import DashboardPage from './pages/DashboardPage'
 import StoriesPage from './pages/StoriesPage'
-import NewsPage from './pages/NewsPage'
 import InitiativesPage from './pages/InitiativesPage'
 
 function App() {
@@ -22,7 +21,6 @@ function App() {
           <Route path="/about" element={<AboutPage />} />
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/stories" element={<StoriesPage />} />
-          <Route path="/news" element={<NewsPage />} />
           <Route path="/initiatives" element={<InitiativesPage />} />
         </Routes>
       </Layout>

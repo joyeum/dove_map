@@ -136,6 +136,40 @@ export class ACLEDAPIClient {
     }
   }
 
+  // 모든 충돌 데이터를 가져오는 메서드 (캐싱 포함)
+  async getAllConflicts(days = 30) {
+    // 캐시 확인
+    const cached = ACLEDCache.getCache();
+    if (cached) {
+      console.log('캐시된 데이터 사용:', cached.length, '개 이벤트');
+      return cached;
+    }
+    
+    console.log('캐시가 없거나 만료됨. API에서 전체 데이터 가져오기 시작...');
+    const startTime = performance.now();
+    
+    try {
+      // ACLED API는 한 번에 최대 10000개까지 반환 가능
+      // 5일치 데이터(약 5500개)는 한 번에 가져올 수 있음
+      const allData = await this.getRecentConflicts(days, 10000);
+      
+      const endTime = performance.now();
+      console.log(`전체 데이터 수집 완료: ${allData.length}개, ${Math.round(endTime - startTime)}ms`);
+      
+      // 캐싱
+      if (allData.length > 0) {
+        ACLEDCache.setCache(allData);
+      }
+      
+      return allData;
+    } catch (error) {
+      console.error('getAllConflicts 실패:', error);
+      // 실패 시 기본 limit로 재시도
+      console.log('전체 데이터 가져오기 실패, 1000개로 재시도...');
+      return await this.getRecentConflicts(days, 1000);
+    }
+  }
+
   async getCountryConflicts(country, year = new Date().getFullYear()) {
     const params = {
       key: this.accessKey,
@@ -313,5 +347,54 @@ export class PeaceMapDataTransformer {
       score: Math.max(0, Math.round(score * 10) / 10),
       status: score > 8 ? 'peaceful' : score > 5 ? 'moderate' : 'conflict'
     };
+  }
+}
+
+// localStorage 캐싱 클래스
+export class ACLEDCache {
+  static CACHE_KEY = 'acled_conflicts_data';
+  static CACHE_TIME_KEY = 'acled_cache_timestamp';
+  static CACHE_DURATION = 24 * 60 * 60 * 1000; // 24시간
+  
+  static getCache() {
+    try {
+      const cached = localStorage.getItem(this.CACHE_KEY);
+      const timestamp = localStorage.getItem(this.CACHE_TIME_KEY);
+      
+      if (cached && timestamp) {
+        const age = Date.now() - parseInt(timestamp);
+        if (age < this.CACHE_DURATION) {
+          console.log(`캐시 사용 (${Math.round(age / 1000 / 60)}분 경과)`);
+          return JSON.parse(cached);
+        } else {
+          console.log('캐시 만료됨');
+          this.clearCache();
+        }
+      }
+    } catch (error) {
+      console.error('캐시 읽기 실패:', error);
+      this.clearCache();
+    }
+    return null;
+  }
+  
+  static setCache(data) {
+    try {
+      localStorage.setItem(this.CACHE_KEY, JSON.stringify(data));
+      localStorage.setItem(this.CACHE_TIME_KEY, Date.now().toString());
+      console.log(`캐시 저장 완료: ${data.length}개 이벤트`);
+    } catch (error) {
+      console.error('캐시 저장 실패:', error);
+      // localStorage 용량 초과 시 캐시 삭제
+      if (error.name === 'QuotaExceededError') {
+        this.clearCache();
+      }
+    }
+  }
+  
+  static clearCache() {
+    localStorage.removeItem(this.CACHE_KEY);
+    localStorage.removeItem(this.CACHE_TIME_KEY);
+    console.log('캐시 삭제됨');
   }
 }

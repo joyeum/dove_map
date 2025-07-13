@@ -108,8 +108,8 @@ const PeaceMap = ({
       const acledClient = new ACLEDAPIClient(email, accessKey);
       console.log('ACLED 클라이언트 생성 완료');
       
-      // 30일 데이터로 실제 limit 확인
-      const conflictData = await acledClient.getRecentConflicts(30, 1000);
+      // 전체 데이터 테스트
+      const conflictData = await acledClient.getAllConflicts(30);
       console.log('API 응답 성공:', conflictData);
       
       // 콘솔에서 자세한 정보 확인하라고 안내
@@ -151,7 +151,8 @@ const PeaceMap = ({
         setError(null);
         
         const acledClient = new ACLEDAPIClient(email, accessKey);
-        const conflictData = await acledClient.getRecentConflicts(30);
+        // 전체 데이터 가져오기 (캐싱 포함)
+        const conflictData = await acledClient.getAllConflicts(30);
         const transformedData = PeaceMapDataTransformer.transformACLEDData(conflictData);
         
         setConflicts(transformedData.map(item => ({

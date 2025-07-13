@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { MapPin, Heart, Info, BarChart3, Newspaper, Users } from 'lucide-react';
+import { MapPin, Heart, Info, BarChart3, Users } from 'lucide-react';
 
 const Header = () => {
   const location = useLocation();
@@ -9,7 +9,6 @@ const Header = () => {
     { path: '/', label: '비둘기 지도', icon: MapPin },
     { path: '/dashboard', label: '대시보드', icon: BarChart3 },
     { path: '/stories', label: '희망 스토리', icon: Heart },
-    { path: '/news', label: '평화 뉴스', icon: Newspaper },
     { path: '/initiatives', label: '이니셔티브', icon: Users },
     { path: '/about', label: '소개', icon: Info }
   ];
