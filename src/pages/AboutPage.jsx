@@ -23,11 +23,7 @@ const AboutPage = () => {
       title: '평화 이니셔티브 추적',
       description: '전 세계 평화 노력과 외교적 성과를 모니터링합니다.'
     },
-    {
-      icon: Zap,
-      title: '실시간 평화 뉴스',
-      description: 'AI 기반 평화 관련 뉴스 큐레이션을 제공합니다.'
-    },
+
     {
       icon: Shield,
       title: '희망 스토리',
@@ -72,7 +68,7 @@ const AboutPage = () => {
           </div>
         </div>
         <h1 className="text-4xl font-bold text-gray-900 mb-4">
-          평화 지도 소개
+          비둘기 지도 소개
         </h1>
         <p className="text-xl text-gray-600 max-w-3xl mx-auto">
           전 세계의 평화를 함께 기원하는 희망 지도입니다. 
@@ -85,7 +81,7 @@ const AboutPage = () => {
         <div className="text-center">
           <h2 className="text-2xl font-bold text-gray-900 mb-4">우리의 미션</h2>
           <p className="text-lg text-gray-700 max-w-4xl mx-auto">
-            평화 지도는 전 세계 사람들이 함께 평화를 기원하고, 분쟁 지역의 상황을 모니터링하며, 
+            비둘기 지도는 전 세계 사람들이 함께 평화를 기원하고, 분쟁 지역의 상황을 모니터링하며, 
             평화를 위한 노력을 공유하는 플랫폼입니다. 우리는 기술을 통해 평화의 메시지를 전파하고, 
             전 세계적인 평화 운동에 기여하고자 합니다.
           </p>
@@ -181,7 +177,7 @@ const AboutPage = () => {
       <div className="text-center">
         <h2 className="text-3xl font-bold text-gray-900 mb-4">함께 참여하세요</h2>
         <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
-          평화 지도는 오픈소스 프로젝트입니다. 
+          비둘기 지도는 오픈소스 프로젝트입니다. 
           개발자, 디자이너, 평화 활동가 모두가 함께 참여하여 더 나은 세상을 만들어갈 수 있습니다.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
