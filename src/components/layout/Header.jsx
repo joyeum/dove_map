@@ -6,7 +6,7 @@ const Header = () => {
   const location = useLocation();
 
   const navItems = [
-    { path: '/', label: '평화 지도', icon: MapPin },
+    { path: '/', label: '비둘기 지도', icon: MapPin },
     { path: '/dashboard', label: '대시보드', icon: BarChart3 },
     { path: '/stories', label: '희망 스토리', icon: Heart },
     { path: '/news', label: '평화 뉴스', icon: Newspaper },
@@ -24,7 +24,7 @@ const Header = () => {
               <Heart className="w-6 h-6 text-white" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-gray-900">평화 지도</h1>
+              <h1 className="text-xl font-bold text-gray-900">비둘기 지도</h1>
               <p className="text-xs text-gray-500">Dove Map</p>
             </div>
           </Link>

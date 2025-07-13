@@ -7,25 +7,131 @@ export class ACLEDAPIClient {
     this.baseURL = 'https://api.acleddata.com';
   }
 
-  async getRecentConflicts(days = 30) {
+  async getRecentConflicts(days = 30, limit = 1000) {
     const endDate = new Date();
     const startDate = new Date(endDate.getTime() - days * 24 * 60 * 60 * 1000);
+    
+    const startDateStr = startDate.toISOString().split('T')[0];
+    const endDateStr = endDate.toISOString().split('T')[0];
     
     const params = {
       key: this.accessKey,
       email: this.email,
-      event_date: `${startDate.toISOString().split('T')[0]}|${endDate.toISOString().split('T')[0]}`,
+      event_date: `${startDateStr}|${endDateStr}`,
       event_date_where: 'BETWEEN',
-      fields: 'event_date,event_type,country,latitude,longitude,fatalities,notes,actor1',
-      limit: 1000,
+      // fields 파라미터 제거 - SQL 에러 방지 (모든 필드 반환)
+      limit: limit,
       format: 'json'
     };
 
     try {
+      console.log('=== API 요청 날짜 범위 ===');
+      console.log('요청 시작 날짜:', startDateStr);
+      console.log('요청 종료 날짜:', endDateStr);
+      console.log('요청 기간:', days, '일간');
+      console.log('현재 시간:', new Date().toISOString());
+      
+      console.log('Requesting ACLED data with params:', {
+        email: this.email,
+        accessKey: this.accessKey ? '***' : 'missing',
+        dateRange: params.event_date,
+        limit: params.limit
+      });
+      
+      // Postman과 비교할 수 있도록 전체 URL 출력
+      const urlParams = new URLSearchParams(params);
+      const fullUrl = `${this.baseURL}/acled/read?${urlParams.toString()}`;
+      console.log('Full API URL (for testing):', fullUrl);
+      
       const response = await axios.get(`${this.baseURL}/acled/read`, { params });
-      return response.data.data;
+      
+      // ACLED API 응답 구조 처리
+      console.log('=== ACLED API 응답 구조 분석 ===');
+      console.log('HTTP Response status:', response.status);
+      console.log('Response data keys:', Object.keys(response.data || {}));
+      console.log('API success flag:', response.data?.success);
+      console.log('API status code:', response.data?.status);
+      console.log('Data count:', response.data?.count);
+      console.log('Full response data:', response.data);
+      
+      // ACLED API 응답 형식: { status, success, data: [...] } 또는 { status, success: false, error }
+      if (!response.data) {
+        throw new Error('No response data received');
+      }
+      
+      // API 에러 체크
+      if (response.data.success === false) {
+        console.error('=== ACLED API 에러 상세 정보 ===');
+        console.error('Full error object:', response.data.error);
+        console.error('Error type:', typeof response.data.error);
+        console.error('Error keys:', response.data.error ? Object.keys(response.data.error) : 'null');
+        
+        let errorMsg = 'API returned success: false';
+        
+        if (response.data.error) {
+          if (typeof response.data.error === 'string') {
+            errorMsg = response.data.error;
+          } else if (typeof response.data.error === 'object') {
+            // 객체인 경우 여러 가능한 필드 확인
+            errorMsg = response.data.error.message || 
+                      response.data.error.detail || 
+                      response.data.error.description ||
+                      JSON.stringify(response.data.error);
+          }
+        }
+        
+        console.error('Final error message:', errorMsg);
+        throw new Error(`ACLED API Error: ${errorMsg}`);
+      }
+      
+      // 데이터 추출
+      const conflictData = response.data.data;
+      if (!Array.isArray(conflictData)) {
+        console.error('Expected data array but got:', typeof conflictData, conflictData);
+        throw new Error(`Expected data array but got: ${typeof conflictData}`);
+      }
+      
+      console.log(`Successfully loaded ${conflictData.length} conflict events from ${response.data.count} total`);
+      
+      // 데이터 제한 경고
+      if (conflictData.length >= limit && response.data.count > limit) {
+        console.warn(`⚠️ API 제한으로 ${limit}개만 표시됨. 실제로는 더 많은 충돌이 있습니다.`);
+        console.warn(`총 사용 가능한 데이터: ${response.data.count}개`);
+        console.warn(`현재 표시 중: ${conflictData.length}개`);
+        console.warn(`누락된 데이터: ${response.data.count - conflictData.length}개`);
+      }
+      
+      // 데이터 비율 표시
+      const percentage = response.data.count > 0 ? ((conflictData.length / response.data.count) * 100).toFixed(1) : 0;
+      console.log(`표시 비율: ${percentage}% (${conflictData.length}/${response.data.count})`);
+      
+      // API 메시지 표시 (예: deprecation 알림)
+      if (response.data.messages && response.data.messages.length > 0) {
+        console.warn('ACLED API Messages:', response.data.messages);
+      }
+      
+      return conflictData;
     } catch (error) {
-      console.error('ACLED API Error:', error);
+      if (error.response) {
+        console.error('ACLED API Response Error:', {
+          status: error.response.status,
+          statusText: error.response.statusText,
+          data: error.response.data
+        });
+        
+        if (error.response.status === 401) {
+          throw new Error('Invalid ACLED API credentials');
+        } else if (error.response.status === 403) {
+          throw new Error('ACLED API access forbidden - check your subscription');
+        } else if (error.response.status === 429) {
+          throw new Error('ACLED API rate limit exceeded');
+        }
+      } else if (error.request) {
+        console.error('ACLED API Network Error:', error.message);
+        throw new Error('Network error - check internet connection');
+      } else {
+        console.error('ACLED API Error:', error.message);
+      }
       throw error;
     }
   }
@@ -37,7 +143,7 @@ export class ACLEDAPIClient {
       country: country,
       year: year,
       event_type: 'Violence against civilians:OR:Battles:OR:Explosions/Remote violence',
-      fields: 'event_date,event_type,country,latitude,longitude,fatalities,notes,actor1',
+      // fields 파라미터 제거 - SQL 에러 방지
       limit: 5000,
       format: 'json'
     };
@@ -64,7 +170,7 @@ export class ACLEDAPIClient {
       longitude_where: 'BETWEEN',
       event_date: `${startDate.toISOString().split('T')[0]}|${endDate.toISOString().split('T')[0]}`,
       event_date_where: 'BETWEEN',
-      fields: 'event_date,event_type,country,latitude,longitude,fatalities,notes,actor1',
+      // fields 파라미터 제거 - SQL 에러 방지
       limit: 2000,
       format: 'json'
     };
@@ -82,22 +188,66 @@ export class ACLEDAPIClient {
 export class PeaceMapDataTransformer {
   static transformACLEDData(acledData) {
     if (!acledData || !Array.isArray(acledData)) {
+      console.warn('Invalid ACLED data received:', acledData);
       return [];
     }
+    
+    console.log(`Transforming ${acledData.length} ACLED events`);
+    
+    // 날짜 분포 분석
+    const dateDistribution = {};
+    acledData.forEach(event => {
+      const date = event.event_date;
+      dateDistribution[date] = (dateDistribution[date] || 0) + 1;
+    });
+    
+    console.log('=== 날짜 분포 분석 ===');
+    console.log('고유한 날짜 수:', Object.keys(dateDistribution).length);
+    console.log('날짜별 이벤트 수:', dateDistribution);
+    
+    // 가장 빈번한 날짜들 상위 5개
+    const sortedDates = Object.entries(dateDistribution)
+      .sort(([,a], [,b]) => b - a)
+      .slice(0, 5);
+    console.log('가장 많은 이벤트가 있는 날짜 Top 5:', sortedDates);
 
-    return acledData.map(event => ({
-      id: event.data_date + '_' + event.latitude + '_' + event.longitude,
-      date: event.event_date,
-      type: event.event_type,
-      country: event.country,
-      latitude: parseFloat(event.latitude),
-      longitude: parseFloat(event.longitude),
-      fatalities: parseInt(event.fatalities) || 0,
-      description: event.notes || '',
-      actor: event.actor1 || 'Unknown',
-      severity: this.calculateSeverity(event.event_type, parseInt(event.fatalities) || 0),
-      color: this.getMarkerColor(event.event_type, parseInt(event.fatalities) || 0)
-    }));
+    const transformedEvents = acledData.map((event, index) => {
+      // 이벤트 구조 디버깅
+      if (index < 3) { // 처음 3개 이벤트만 자세히 로깅
+        console.log(`Event ${index} structure:`, Object.keys(event));
+        console.log(`Event ${index} 날짜 정보:`, {
+          event_date: event.event_date,
+          year: event.year,
+          timestamp: event.timestamp
+        });
+        console.log(`Event ${index} sample:`, event);
+      }
+      
+      const lat = parseFloat(event.latitude);
+      const lng = parseFloat(event.longitude);
+      
+      if (isNaN(lat) || isNaN(lng)) {
+        console.warn('Invalid coordinates for event:', event);
+        return null;
+      }
+      
+      return {
+        id: (event.data_date || event.event_id_cnty || Date.now()) + '_' + lat + '_' + lng,
+        date: event.event_date,
+        type: event.event_type,
+        country: event.country,
+        latitude: lat,
+        longitude: lng,
+        fatalities: parseInt(event.fatalities) || 0,
+        description: event.notes || event.event_type || 'No description available',
+        actor: event.actor1 || 'Unknown',
+        severity: this.calculateSeverity(event.event_type, parseInt(event.fatalities) || 0),
+        color: this.getMarkerColor(event.event_type, parseInt(event.fatalities) || 0)
+      };
+    }).filter(event => event !== null);
+    
+    console.log(`Successfully transformed ${transformedEvents.length} valid events`);
+    return transformedEvents;
   }
 
   static calculateSeverity(eventType, fatalities) {
